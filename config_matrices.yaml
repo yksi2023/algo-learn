@@ -1,0 +1,33 @@
+# Four paired conditions; both learning-rate matrices change together.
+problem:
+  dimensions: {d: 32, m: 32, h: 64, rank: 32}
+  V: {kind: svd, spectrum: linear, max: 4.0, min: 1.0}
+  Sigma_x: {kind: identity}
+  Sigma_epsilon: {kind: identity}
+
+rules:
+  sgd:
+    Lambda1: {kind: identity}
+    Lambda2: {kind: identity}
+  random_diagonal:
+    Lambda1: {kind: diagonal, spectrum: uniform, min: 0.5, max: 1.5, seed: 17}
+    Lambda2: {kind: diagonal, spectrum: uniform, min: 0.5, max: 1.5, seed: 23}
+  spd_1:
+    # Same eigenvalues as random_diagonal; randomly rotated eigenvectors.
+    Lambda1: {kind: spd, spectrum: uniform, min: 0.5, max: 1.5, seed: 17}
+    Lambda2: {kind: spd, spectrum: uniform, min: 0.5, max: 1.5, seed: 23}
+  spd_2:
+    # A second independent dense pair, with a wider eigenvalue range.
+    Lambda1: {kind: spd, spectrum: uniform, min: 0.2, max: 1.8, seed: 31}
+    Lambda2: {kind: spd, spectrum: uniform, min: 0.2, max: 1.8, seed: 37}
+
+train:
+  eta: 0.001
+  batch_size: 16
+  steps: 20000
+  init_scale: 0.1
+  logging: {eval_every: 50, checkpoint_every: 1000, tail_fraction: 0.2}
+
+seeds: {problem: 11, init: [101, 102, 103], data: [201, 202, 203]}
+numerics: {rtol: 1.0e-10, atol: 1.0e-12, gap_rtol: 1.0e-8}
+runtime: {device: "cuda:0", dtype: float64, threads: 1}

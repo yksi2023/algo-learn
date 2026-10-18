@@ -1,0 +1,28 @@
+[project]
+name = "algorithm-dependent-representation-learning"
+version = "0.1.0"
+description = "Algorithm Dependent Representation Learning: experiments with two-layer linear networks"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "torch==2.14.0",
+    "matplotlib>=3.9,<4",
+    "PyYAML>=6.0.2,<7",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10"]
+
+[tool.uv]
+package = false
+
+# The Linux PyPI wheel for torch 2.14.0 depends on CUDA 13.0.3.
+[[tool.uv.index]]
+name = "tuna"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+default = true
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+pythonpath = ["."]
+addopts = "-ra"

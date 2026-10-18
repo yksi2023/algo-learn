@@ -1,0 +1,28 @@
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Build and test artifacts
+build/
+dist/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local experiment outputs
+/records/
+
+# Local settings and editor files
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Keep uv.lock and .python-version in version control.
