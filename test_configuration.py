@@ -61,6 +61,7 @@ def test_expansion_pairs_seeds_and_copies_config(config, tmp_path):
         index = item["repeat"]
         assert item["seeds"] == {"problem": 11, "init": 101 + index, "data": 201 + index}
         assert item["runtime"]["run_id"] == f"pilot-{item['rule_name']}-{index}"
+        assert Path(item["runtime"]["records_dir"]) == tmp_path / "pilot"
     runs[0]["problem"]["V"]["values"][0] = 99.0
     assert runs[1]["problem"]["V"]["values"][0] == 3.0
     assert config == before
@@ -87,10 +88,13 @@ def test_file_paths_are_relative_to_config(tmp_path):
     assert config["problem"]["Sigma_x"]["path"] == str(tmp_path / "covariance.csv")
 
 
-@pytest.mark.parametrize("filename", ["config.yaml", "config_anisotropic.yaml"])
-def test_supplied_configs(filename, tmp_path):
+@pytest.mark.parametrize("filename,count", [
+    ("config.yaml", 9), ("config_anisotropic.yaml", 9),
+    ("config_matrices.yaml", 12), ("config_sgd.yaml", 5),
+])
+def test_supplied_configs(filename, count, tmp_path):
     config = load_config(Path(__file__).with_name(filename))
-    assert len(expand_runs(config, "sample", tmp_path)) == 9
+    assert len(expand_runs(config, "sample", tmp_path)) == count
     assert config["problem"]["dimensions"] == {"d": 32, "m": 32, "h": 64, "rank": 32}
     assert config["runtime"]["device"] == "cuda:0"
 

@@ -103,7 +103,7 @@ def expand_runs(
                 single["seeds"][key] = config["seeds"][key][index]
             single["runtime"].update(
                 run_id=f"{suite_id}-{name}-{index}", suite_id=suite_id,
-                records_dir=str(Path(records_dir).resolve()),
+                records_dir=str((Path(records_dir) / suite_id).resolve()),
             )
             if device is not None:
                 single["runtime"]["device"] = device

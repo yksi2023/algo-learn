@@ -42,24 +42,24 @@ def test_run_and_resume(config_path, tmp_path):
     # Both rules start from identical weights and consume identical random draws.
     runs, skipped = read_runs(records, "pilot")
     assert len(runs) == 2 and not skipped
-    first = torch.load(records / "pilot-sgd-0.pt", weights_only=True)
-    second = torch.load(records / "pilot-second_layer-0.pt", weights_only=True)
+    first = torch.load(records / "pilot" / "pilot-sgd-0.pt", weights_only=True)
+    second = torch.load(records / "pilot" / "pilot-second_layer-0.pt", weights_only=True)
     for key in ("initial_W1", "initial_W2", "data_rng_state"):
         assert torch.equal(first[key], second[key])
     assert not torch.equal(first["W2"], second["W2"])
-    metadata_before = (records / "pilot-sgd-0.json").read_bytes()
+    metadata_before = (records / "pilot" / "pilot-sgd-0.json").read_bytes()
     with pytest.raises(ValueError, match="CPU"):
-        run.main(["--resume", str(records / "pilot-sgd-0.pt"), "--device", "cpu"])
-    assert (records / "pilot-sgd-0.json").read_bytes() == metadata_before
-    assert run.main(["--resume", str(records / "pilot-sgd-0.pt"), "--until-step", "5"]) == 0
-    meta = json.loads((records / "pilot-sgd-0.json").read_text())
+        run.main(["--resume", str(records / "pilot" / "pilot-sgd-0.pt"), "--device", "cpu"])
+    assert (records / "pilot" / "pilot-sgd-0.json").read_bytes() == metadata_before
+    assert run.main(["--resume", str(records / "pilot" / "pilot-sgd-0.pt"), "--until-step", "5"]) == 0
+    meta = json.loads((records / "pilot" / "pilot-sgd-0.json").read_text())
     assert meta["status"] == "completed" and meta["last_step"] == 5
     assert meta["resume_history"][0]["from_step"] == 3
     assert sorted(item.steps for item in read_runs(records, "pilot")[0]) == [3, 5]
-    before = (records / "pilot-sgd-0.pt").read_bytes()
+    before = (records / "pilot" / "pilot-sgd-0.pt").read_bytes()
     with pytest.raises(FileExistsError):
         run.main(_args(config_path, records, "--rule", "sgd", "--repeat", "0"))
-    assert (records / "pilot-sgd-0.pt").read_bytes() == before
+    assert (records / "pilot" / "pilot-sgd-0.pt").read_bytes() == before
 
 
 def test_failure_is_recorded(config_path, tmp_path, monkeypatch):
@@ -70,7 +70,7 @@ def test_failure_is_recorded(config_path, tmp_path, monkeypatch):
     records = tmp_path / "records"
     with pytest.raises(FloatingPointError):
         run.main(_args(config_path, records, "--rule", "sgd", "--repeat", "0"))
-    meta = json.loads((records / "pilot-sgd-0.json").read_text())
+    meta = json.loads((records / "pilot" / "pilot-sgd-0.json").read_text())
     assert meta["status"] == "failed"
     assert read_runs(records, "pilot")[0] == []
 

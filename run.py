@@ -122,7 +122,7 @@ def build_parser() -> argparse.ArgumentParser:
     source.add_argument("--config", type=Path, help="YAML configuration (default: config.yaml beside this script)")
     source.add_argument("--resume", type=Path, help="Continue a saved .pt checkpoint and matching .json")
     parser.add_argument("--run-id", help="Suite ID; actual IDs append the rule and zero-based repeat")
-    parser.add_argument("--records", type=Path, help="Result directory (default: ./records)")
+    parser.add_argument("--records", type=Path, help="Result root; runs go in <root>/<run-id>/ (default: ./records)")
     parser.add_argument("--rule", help="Run one configured rule")
     parser.add_argument("--repeat", type=int, help="Run one zero-based paired seed index")
     parser.add_argument("--device", help="CUDA GPU: cuda or cuda:N (default: configured cuda:0)")
